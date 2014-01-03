@@ -1,0 +1,88 @@
+classes
+    Warrior
+        attitude enemy
+        health 100
+        strength 100
+        mana 30
+    end
+
+    Magician
+        attitude enemy
+        health 100
+        strength 30
+        mana 100
+    end
+
+    Trader
+        attitude neutral
+        health 30
+        strength 10
+        mana 10
+    end
+end
+
+field
+    width 20
+    height 20
+    startPoint (1 10)
+
+    npcs
+        w1 Warrior (5 17)
+        w2 Warrior (2 8)
+        m1 Magician (7 6)
+        t1 Trader (17 11)
+    end
+
+    items
+        doorOpener activator (11 12)
+        potion pickable (7 13)
+        lava area (19 7)
+    end
+
+    walls
+        (1 1)
+        (2 1)
+        (3 1)
+        (3 2)
+        (3 3)
+        (3 4)
+    end
+end
+
+rules
+    when doorOpener activated
+        clear (3 4)
+    end
+
+    when m1 dead
+        create npc
+            m2 Magician (7 6)
+        end
+    end
+
+    when w1 dead
+        create item
+            gem pickable (5 17)
+        end
+    end
+
+    when potion picked
+        playerStats
+            health plus 30
+            mana plus 20
+            strength plus 10
+        end
+    end
+
+    when gem picked
+        playerStats
+            money plus 100
+        end
+    end
+
+    when lava visited
+        playerStats
+            health minus 20
+        end
+    end
+end

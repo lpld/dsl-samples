@@ -1,0 +1,32 @@
+mana                : MANA IDENTIFIER
+strength            : STRENGTH IDENTIFIER
+health              : HEALTH IDENTIFIER
+attitude            : ATTITUDE ENEMY | NEUTRAL | ALLY
+classParams         : attitude strength mana attitude
+class               : CLASS classParams END
+classesList         : CLASSES (class)* END
+
+location            : LEFT_PAR IDENTIFIER IDENTIFIER RIGHT_PAR
+fieldWidth          : WIDTH IDENTIFIER
+fieldHeight         : HEIGHT IDENTIFIER
+startPoint          : START_POINT location
+npcDef              : IDENTIFIER IDENTIFIER location
+npcsList            : NPCS (npcDef)* END
+itemDef             : IDENTIFIER IDENTIFIER location
+itemsList           : ITEMS (item)* END
+wallsList           : WALLS (location)* END
+fieldDef            : fieldWidth fieldHeight startPoint npcsList itemsList wallsList
+
+rulesList           : RULES (ruleDef)* END
+ruleDef             : WHEN IDENTIFIER IDENTIFIER ruleAction END
+ruleAction          : clearAction | createAction | playerStatsAction
+clearAction         : CLEAR location
+createAction        : CREATE createNpc | createItem
+createNpc           : NPC (npcDef)* END
+createItem          : ITEM (itemDef)* END
+playerStatsAction   : PLAYER_STATS (statsUpdate)* END
+statsUpdate         : stats action IDENTIFIER
+stats               : HEALTH | MANA | STRENGTH | MONEY
+action              : PLUS | MINUS
+
+all                 : classesList fieldDef rulesList

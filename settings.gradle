@@ -1,0 +1,3 @@
+include 'example-01'
+
+rootProject.name = 'dsl-samples'
