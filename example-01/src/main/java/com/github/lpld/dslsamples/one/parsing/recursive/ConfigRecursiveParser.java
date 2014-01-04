@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A recursive descent parser for
+ *
  * @author leopold
  * @since 12/30/13
  */
@@ -44,25 +46,24 @@ public class ConfigRecursiveParser implements ConfigParser {
 
     // MODEL
     private List<NpcClass> npcClasses = new ArrayList<>();
-    private List<Npc> npcs = new ArrayList<>();
     private List<MapItem> items = new ArrayList<>();
     private Map<Rule, Action> rules = new HashMap<>();
     private int width;
     private int height;
     private Location startPoint;
 
-    public ConfigRecursiveParser(String config) {
+    public ConfigRecursiveParser(String buffer) {
         if (buffer == null) {
             throw new NullPointerException();
         }
 
-        this.buffer = config;
-        this.tokenizer = new Tokenizer(config);
+        this.buffer = buffer;
+        this.tokenizer = new Tokenizer(buffer);
     }
 
     @Override
     public Game parse() throws ParsingException {
-        boolean result = start();
+        boolean result = doParse();
 
         if (result) {
             GameMap gameMap = new GameMap(width, height);
@@ -80,7 +81,7 @@ public class ConfigRecursiveParser implements ConfigParser {
 
     }
 
-    public boolean start() {
+    private boolean doParse() {
         return classes() && field() && rules();
     }
 

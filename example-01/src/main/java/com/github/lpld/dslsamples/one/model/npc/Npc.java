@@ -34,6 +34,7 @@ public class Npc extends MapItem {
     public void attack(int hitStrength) {
         health -= hitStrength;
         if (!isAlive()) {
+            map.removeItem(this);
             publishEvent(new Event(EventType.NPC_DEAD, this));
         }
     }

@@ -21,7 +21,7 @@ public abstract class MapItem {
     protected final String id;
     protected Location location;
 
-    private GameMap map;
+    protected GameMap map;
 
     protected MapItem(String id, Location location) {
         this.id = id;

@@ -19,6 +19,7 @@ public class Pickable extends MapItem {
     }
 
     public void pick() {
+        map.removeItem(this);
         publishEvent(new Event(EventType.ITEM_PICKED, this));
     }
 }

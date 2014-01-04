@@ -1,8 +1,6 @@
 package com.github.lpld.dslsamples.one.model.rules;
 
 import com.github.lpld.dslsamples.one.model.Game;
-import com.github.lpld.dslsamples.one.model.Player;
-import com.github.lpld.dslsamples.one.model.map.GameMap;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -20,6 +18,6 @@ public class ClearCellAction implements Action {
 
     @Override
     public void execute(Game game) {
-        game.getGameMap().clearItem(location);
+        game.getGameMap().removeItem(location);
     }
 }

@@ -1,6 +1,7 @@
 package com.github.lpld.dslsamples.one;
 
 import com.github.lpld.dslsamples.one.model.Game;
+import com.github.lpld.dslsamples.one.model.GameProcessor;
 import com.github.lpld.dslsamples.one.model.Player;
 import com.github.lpld.dslsamples.one.model.events.EventType;
 import com.github.lpld.dslsamples.one.model.items.Activator;
@@ -8,6 +9,7 @@ import com.github.lpld.dslsamples.one.model.items.Area;
 import com.github.lpld.dslsamples.one.model.items.Pickable;
 import com.github.lpld.dslsamples.one.model.map.GameMap;
 import com.github.lpld.dslsamples.one.model.map.Location;
+import com.github.lpld.dslsamples.one.model.map.MapItem;
 import com.github.lpld.dslsamples.one.model.map.Wall;
 import com.github.lpld.dslsamples.one.model.npc.Attitude;
 import com.github.lpld.dslsamples.one.model.npc.Npc;
@@ -24,31 +26,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author leopold
  * @since game_definition/2/14
  */
 public abstract class AbstractParserTest {
+    private static final String GAME_DEFINITION_FILE = "game_definition";
 
     protected abstract ConfigParser createParser(String config);
 
     @Test
     public void testParser() throws IOException, ParsingException {
-        ConfigParser parser = createParser(readFileAsString("game_definition"));
+        ConfigParser parser = createParser(readFileAsString(GAME_DEFINITION_FILE));
 
         Game parsedGame = parser.parse();
         Game filledGame = fillGameModel();
 
         assertGamesEqual(filledGame, parsedGame);
+
+        runSimpleGameScenario(parsedGame);
     }
 
     private void assertGamesEqual(Game gameOne, Game gameTwo) {
         assertEquals(gameOne.getRules(), gameTwo.getRules());
         assertEquals(gameOne.getPlayer(), gameTwo.getPlayer());
-        assertArrayEquals(gameOne.getGameMap().getField(), gameTwo.getGameMap().getField());
+        assertEquals(gameOne.getGameMap(), gameTwo.getGameMap());
     }
 
     private Game fillGameModel() {
@@ -125,6 +129,74 @@ public abstract class AbstractParserTest {
         );
 
         return game;
+    }
+
+    private void runSimpleGameScenario(Game game) {
+        GameMap map = game.getGameMap();
+        Player player = game.getPlayer();
+        player.setHealth(100);
+        player.setMana(100);
+        player.setStrength(30);
+        player.setMoney(0);
+
+        // creating game processor
+        map.setEventListener(new GameProcessor(game));
+
+        // ----------- Warrior "w1" ------------
+        Npc warrior1 = (Npc) map.itemById("w1");
+        Location w1Location = warrior1.getLocation();
+
+        // attack him, but leave alive
+        warrior1.attack(99);
+        assertTrue(warrior1.isAlive());
+        assertEquals(warrior1, map.itemByLocation(w1Location));
+
+        // finish him!
+        warrior1.attack(1);
+        assertFalse(warrior1.isAlive());
+
+        // ----------- Pickable "gem", left by the warrior w1 ------------
+        MapItem gem = map.itemByLocation(w1Location);
+        assertEquals(Pickable.class, gem.getClass());
+        assertEquals("gem", gem.getId());
+
+        // pick it!
+        ((Pickable) gem).pick();
+        assertEquals(100, player.getMoney());
+
+        // ----------- Pickable "potion" -----------
+        Pickable potion = (Pickable) map.itemByLocation(new Location(7, 13));
+        potion.pick();
+        assertEquals(130, player.getHealth());
+        assertEquals(120, player.getMana());
+        assertEquals(40, player.getStrength());
+
+        // ----------- Lava -----------
+        Area lava = (Area) map.itemByLocation(new Location(19, 7));
+        lava.visit();
+        assertEquals(110, player.getHealth());
+
+        // ----------- Opening the door with activator "doorOpener" ----------
+        Activator doorOpener = (Activator) map.itemByLocation(new Location(11, 12));
+        Location doorLocation = new Location(3, 4);
+        assertNotNull(map.itemByLocation(doorLocation));
+        doorOpener.activate();
+        assertNull(map.itemByLocation(doorLocation));
+
+        // ----------- Lava again -----------
+        lava.visit();
+        assertEquals(90, player.getHealth());
+
+        // ----------- Magician m1 ------------
+        Npc magician1 = (Npc) map.itemById("m1");
+        Location m1Location = magician1.getLocation();
+        // kill him
+        magician1.attack(100);
+
+        // ----------- Magician m2, that appeared after m1 is dead -------------
+        MapItem magician2 = map.itemByLocation(m1Location);
+        assertEquals(Npc.class, magician2.getClass());
+        assertEquals("m2", magician2.getId());
     }
 
     private String readFileAsString(String filePath) throws IOException {

@@ -18,7 +18,7 @@ public class Area extends MapItem {
         super(id, location);
     }
 
-    public void pick() {
+    public void visit() {
         publishEvent(new Event(EventType.AREA_VISITED, this));
     }
 }
