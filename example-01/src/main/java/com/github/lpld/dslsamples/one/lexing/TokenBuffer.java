@@ -34,4 +34,10 @@ public class TokenBuffer {
         currentLine = token.getLineNumber();
         return token;
     }
+
+    public TokenBuffer tail() {
+        TokenBuffer tail = new TokenBuffer(tokenList);
+        tail.currentToken = this.currentToken + 1;
+        return tail;
+    }
 }
