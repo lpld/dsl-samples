@@ -17,7 +17,7 @@ import com.github.lpld.dslsamples.one.model.npc.NpcClass;
 import com.github.lpld.dslsamples.one.model.rules.ClearCellAction;
 import com.github.lpld.dslsamples.one.model.rules.CreateItemAction;
 import com.github.lpld.dslsamples.one.model.rules.UpdatePlayerStatsAction;
-import com.github.lpld.dslsamples.one.parsing.ConfigParser;
+import com.github.lpld.dslsamples.one.parsing.GameDefinitionParser;
 import com.github.lpld.dslsamples.one.parsing.ParsingException;
 import org.junit.Test;
 
@@ -35,11 +35,11 @@ import static org.junit.Assert.*;
 public abstract class AbstractParserTest {
     private static final String GAME_DEFINITION_FILE = "game_definition";
 
-    protected abstract ConfigParser createParser(String config);
+    protected abstract GameDefinitionParser createParser(String config);
 
     @Test
     public void testParser() throws IOException, ParsingException {
-        ConfigParser parser = createParser(readFileAsString(GAME_DEFINITION_FILE));
+        GameDefinitionParser parser = createParser(readFileAsString(GAME_DEFINITION_FILE));
 
         Game parsedGame = parser.parse();
         Game filledGame = fillGameModel();
@@ -210,7 +210,7 @@ public abstract class AbstractParserTest {
 
             br = new BufferedReader(new InputStreamReader(is));
             while ((line = br.readLine()) != null) {
-                sb.append(line);
+                sb.append(line).append('\n');
             }
 
         } catch (IOException e) {
@@ -227,6 +227,4 @@ public abstract class AbstractParserTest {
 
         return sb.toString();
     }
-
-
 }

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
+ * A token
+ *
  * @author leopold
  * @since 12/30/13
  */
@@ -12,4 +14,5 @@ import lombok.RequiredArgsConstructor;
 public class Token {
     private final TokenType type;
     private final String value;
+    private final int lineNumber;
 }

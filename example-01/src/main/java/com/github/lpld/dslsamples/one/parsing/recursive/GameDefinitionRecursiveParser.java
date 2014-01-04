@@ -1,6 +1,7 @@
 package com.github.lpld.dslsamples.one.parsing.recursive;
 
 import com.github.lpld.dslsamples.one.lexing.Token;
+import com.github.lpld.dslsamples.one.lexing.TokenBuffer;
 import com.github.lpld.dslsamples.one.lexing.Tokenizer;
 import com.github.lpld.dslsamples.one.model.Game;
 import com.github.lpld.dslsamples.one.model.Player;
@@ -17,7 +18,7 @@ import com.github.lpld.dslsamples.one.model.npc.Attitude;
 import com.github.lpld.dslsamples.one.model.npc.Npc;
 import com.github.lpld.dslsamples.one.model.npc.NpcClass;
 import com.github.lpld.dslsamples.one.model.rules.*;
-import com.github.lpld.dslsamples.one.parsing.ConfigParser;
+import com.github.lpld.dslsamples.one.parsing.GameDefinitionParser;
 import com.github.lpld.dslsamples.one.parsing.ParsingException;
 
 import java.util.ArrayList;
@@ -31,9 +32,9 @@ import java.util.Map;
  * @author leopold
  * @since 12/30/13
  */
-public class ConfigRecursiveParser implements ConfigParser {
+public class GameDefinitionRecursiveParser implements GameDefinitionParser {
     private String buffer;
-    private final Tokenizer tokenizer;
+    private final TokenBuffer tokenBuffer;
 
     // TEMP
     private NpcClass npcClass;
@@ -52,13 +53,13 @@ public class ConfigRecursiveParser implements ConfigParser {
     private int height;
     private Location startPoint;
 
-    public ConfigRecursiveParser(String buffer) {
+    public GameDefinitionRecursiveParser(String buffer) {
         if (buffer == null) {
             throw new NullPointerException();
         }
 
         this.buffer = buffer;
-        this.tokenizer = new Tokenizer(buffer);
+        this.tokenBuffer = new Tokenizer(buffer).getTokens();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class ConfigRecursiveParser implements ConfigParser {
             return new Game(gameMap, player, rules);
         } else {
             // TODO provide more informative errors
-            throw new ParsingException("Unable to parse");
+            throw new ParsingException("Unable to parse. Error on line: " + tokenBuffer.getCurrentLine());
         }
 
     }
@@ -86,17 +87,17 @@ public class ConfigRecursiveParser implements ConfigParser {
     }
 
     private boolean classes() {
-        if (tokenizer.popToken().getType() != TokenType.CLASSES) {
+        if (tokenBuffer.popToken().getType() != TokenType.CLASSES) {
             return false;
         }
 
-        while (tokenizer.nextToken().getType() != TokenType.END) {
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
             if (!loadClass()) {
                 return false;
             }
         }
 
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
@@ -105,9 +106,9 @@ public class ConfigRecursiveParser implements ConfigParser {
 
         npcClass = new NpcClass(string);
 
-        while (tokenizer.nextToken().getType() != TokenType.END) {
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
             boolean result;
-            switch (tokenizer.popToken().getType()) {
+            switch (tokenBuffer.popToken().getType()) {
                 case ATTITUDE:
                     result = attitude();
                     break;
@@ -130,7 +131,7 @@ public class ConfigRecursiveParser implements ConfigParser {
         }
 
         npcClasses.add(npcClass);
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
@@ -154,21 +155,36 @@ public class ConfigRecursiveParser implements ConfigParser {
 
     private boolean attitude() {
         if (!string()) return false;
-        Attitude attitude = Attitude.valueOf(string.toUpperCase());  // can throw illegal arg.
+
+        Attitude attitude;
+
+        switch (string) {
+            case "ally":
+                attitude = Attitude.ALLY;
+                break;
+            case "neutral":
+                attitude = Attitude.NEUTRAL;
+                break;
+            case "enemy":
+                attitude = Attitude.ENEMY;
+                break;
+            default:
+                return false;
+        }
         npcClass.setAttitude(attitude);
         return true;
 
     }
 
     private boolean field() {
-        Token token = tokenizer.popToken();
+        Token token = tokenBuffer.popToken();
         if (token.getType() != TokenType.FIELD) {
             return false;
         }
 
-        while (tokenizer.nextToken().getType() != TokenType.END) {
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
             boolean result;
-            switch (tokenizer.popToken().getType()) {
+            switch (tokenBuffer.popToken().getType()) {
                 case WIDTH:
                     result = width();
                     break;
@@ -196,17 +212,17 @@ public class ConfigRecursiveParser implements ConfigParser {
             }
         }
 
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
     private boolean items() {
-        while (tokenizer.nextToken().getType() != TokenType.END) {
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
             if (!item()) return false;
             items.add(item);
         }
 
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
@@ -220,23 +236,31 @@ public class ConfigRecursiveParser implements ConfigParser {
         if (!location()) return false;
         Location itemLocation = location;
 
-        if ("activator".equals(itemType)) {
-            item = new Activator(itemId, itemLocation);
-        } else if ("pickable".equals(itemType)) {
-            item = new Pickable(itemId, itemLocation);
-        } else if ("area".equals(itemType)) {
-            item = new Area(itemId, itemLocation);
+        boolean result = true;
+        switch (itemType) {
+            case "activator":
+                item = new Activator(itemId, itemLocation);
+                break;
+            case "pickable":
+                item = new Pickable(itemId, itemLocation);
+                break;
+            case "area":
+                item = new Area(itemId, itemLocation);
+                break;
+            default:
+                result = false;
         }
-        return true;
+
+        return result;
     }
 
     private boolean npcs() {
-        while (tokenizer.nextToken().getType() != TokenType.END) {
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
             if (!npc()) return false;
             items.add(npc);
         }
 
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
@@ -274,7 +298,7 @@ public class ConfigRecursiveParser implements ConfigParser {
     }
 
     private boolean location() {
-        if (tokenizer.popToken().getType() != TokenType.LEFT_PAR) {
+        if (tokenBuffer.popToken().getType() != TokenType.LEFT_PAR) {
             return false;
         }
 
@@ -286,37 +310,37 @@ public class ConfigRecursiveParser implements ConfigParser {
 
         location = new Location(x, y);
 
-        if (tokenizer.popToken().getType() != TokenType.RIGHT_PAR) {
+        if (tokenBuffer.popToken().getType() != TokenType.RIGHT_PAR) {
             return false;
         }
         return true;
     }
 
     public boolean walls() {
-        while (tokenizer.nextToken().getType() != TokenType.END) {
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
             if (!location()) return false;
             items.add(new Wall(location));
         }
 
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
     public boolean rules() {
-        if (tokenizer.popToken().getType() != TokenType.RULES) {
+        if (tokenBuffer.popToken().getType() != TokenType.RULES) {
             return false;
         }
 
-        while (tokenizer.nextToken().getType() != TokenType.END) {
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
             if (!rule()) return false;
         }
 
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
     private boolean rule() {
-        if (tokenizer.popToken().getType() != TokenType.WHEN) {
+        if (tokenBuffer.popToken().getType() != TokenType.WHEN) {
             return false;
         }
 
@@ -325,23 +349,28 @@ public class ConfigRecursiveParser implements ConfigParser {
 
         if (!string()) return false;
         EventType eventType;
-        if ("dead".equals(string)) {
-            eventType = EventType.NPC_DEAD;
-        } else if ("activated".equals(string)) {
-            eventType = EventType.ACTIVATOR_TRIGGERED;
-        } else if ("picked".equals(string)) {
-            eventType = EventType.ITEM_PICKED;
-        } else if ("visited".equals(string)) {
-            eventType = EventType.AREA_VISITED;
-        } else {
-            return false;
+        switch (string) {
+            case "dead":
+                eventType = EventType.NPC_DEAD;
+                break;
+            case "activated":
+                eventType = EventType.ACTIVATOR_TRIGGERED;
+                break;
+            case "picked":
+                eventType = EventType.ITEM_PICKED;
+                break;
+            case "visited":
+                eventType = EventType.AREA_VISITED;
+                break;
+            default:
+                return false;
         }
 
         Rule rule = new Rule(itemId, eventType);
         if (!ruleAction()) return false;
         rules.put(rule, ruleAction);
 
-        if (tokenizer.popToken().getType() != TokenType.END) {
+        if (tokenBuffer.popToken().getType() != TokenType.END) {
             return false;
         }
         return true;
@@ -349,7 +378,7 @@ public class ConfigRecursiveParser implements ConfigParser {
 
     private boolean ruleAction() {
         boolean result;
-        switch (tokenizer.popToken().getType()) {
+        switch (tokenBuffer.popToken().getType()) {
             case CLEAR:
                 result = clearAction();
                 break;
@@ -363,10 +392,7 @@ public class ConfigRecursiveParser implements ConfigParser {
                 result = false;
         }
 
-        if (!result) {
-            return false;
-        }
-        return true;
+        return result;
     }
 
     private boolean clearAction() {
@@ -377,7 +403,7 @@ public class ConfigRecursiveParser implements ConfigParser {
 
     private boolean createAction() {
         boolean result;
-        switch (tokenizer.popToken().getType()) {
+        switch (tokenBuffer.popToken().getType()) {
             case NPC:
                 result = npc();
                 ruleAction = new CreateItemAction(npc);
@@ -389,7 +415,7 @@ public class ConfigRecursiveParser implements ConfigParser {
             default:
                 result = false;
         }
-        if (!result || tokenizer.popToken().getType() != TokenType.END) {
+        if (!result || tokenBuffer.popToken().getType() != TokenType.END) {
             return false;
         }
 
@@ -399,11 +425,9 @@ public class ConfigRecursiveParser implements ConfigParser {
     private boolean playerStatsAction() {
         UpdatePlayerStatsAction updatePlayerStatsAction = new UpdatePlayerStatsAction();
 
-        while (tokenizer.nextToken().getType() != TokenType.END) {
-            boolean result;
-
-            Token paramToken = tokenizer.popToken();
-            Token signToken = tokenizer.popToken();
+        while (tokenBuffer.nextToken().getType() != TokenType.END) {
+            Token paramToken = tokenBuffer.popToken();
+            Token signToken = tokenBuffer.popToken();
             if (!integer()) return false;
             int delta = integer;
 
@@ -436,23 +460,28 @@ public class ConfigRecursiveParser implements ConfigParser {
 
         }
         ruleAction = updatePlayerStatsAction;
-        tokenizer.popToken(); // END
+        tokenBuffer.popToken(); // END
         return true;
     }
 
 
     private boolean integer() {
-        Token integerToken = tokenizer.popToken();
+        Token integerToken = tokenBuffer.popToken();
         if (integerToken.getType() != TokenType.IDENTIFIER) {
             return false;
         }
 
-        integer = Integer.parseInt(integerToken.getValue());
+        try {
+            integer = Integer.parseInt(integerToken.getValue());
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+
         return true;
     }
 
     private boolean string() {
-        Token stringToken = tokenizer.popToken();
+        Token stringToken = tokenBuffer.popToken();
         if (stringToken.getType() != TokenType.IDENTIFIER) {
             return false;
         }

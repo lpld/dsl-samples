@@ -1,7 +1,7 @@
 package com.github.lpld.dslsamples.one;
 
-import com.github.lpld.dslsamples.one.parsing.ConfigParser;
-import com.github.lpld.dslsamples.one.parsing.recursive.ConfigRecursiveParser;
+import com.github.lpld.dslsamples.one.parsing.GameDefinitionParser;
+import com.github.lpld.dslsamples.one.parsing.recursive.GameDefinitionRecursiveParser;
 
 /**
  * @author leopold
@@ -9,7 +9,7 @@ import com.github.lpld.dslsamples.one.parsing.recursive.ConfigRecursiveParser;
  */
 public class RecursiveParserTest extends AbstractParserTest {
     @Override
-    protected ConfigParser createParser(String config) {
-        return new ConfigRecursiveParser(config);
+    protected GameDefinitionParser createParser(String config) {
+        return new GameDefinitionRecursiveParser(config);
     }
 }
