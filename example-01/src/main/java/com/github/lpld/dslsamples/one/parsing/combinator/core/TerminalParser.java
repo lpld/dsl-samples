@@ -1,16 +1,17 @@
-package com.github.lpld.dslsamples.one.parsing.combinator;
+package com.github.lpld.dslsamples.one.parsing.combinator.core;
 
 import com.github.lpld.dslsamples.one.lexing.Token;
-import com.github.lpld.dslsamples.one.lexing.TokenBuffer;
 import com.github.lpld.dslsamples.one.lexing.TokenType;
 import lombok.RequiredArgsConstructor;
+
+import java.lang.*;
 
 /**
  * @author leopold
  * @since 1/4/14
  */
 @RequiredArgsConstructor
-public class TerminalParser implements ParserCombinator {
+public class TerminalParser implements Combinator {
     private final TokenType tokenType;
 
     @Override

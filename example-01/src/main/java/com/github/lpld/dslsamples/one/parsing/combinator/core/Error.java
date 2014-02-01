@@ -1,4 +1,4 @@
-package com.github.lpld.dslsamples.one.parsing.combinator;
+package com.github.lpld.dslsamples.one.parsing.combinator.core;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

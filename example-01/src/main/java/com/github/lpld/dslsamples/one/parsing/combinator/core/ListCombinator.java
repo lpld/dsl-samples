@@ -1,4 +1,4 @@
-package com.github.lpld.dslsamples.one.parsing.combinator;
+package com.github.lpld.dslsamples.one.parsing.combinator.core;
 
 import lombok.RequiredArgsConstructor;
 
@@ -7,23 +7,25 @@ import lombok.RequiredArgsConstructor;
  * @since 1/4/14
  */
 @RequiredArgsConstructor
-public class ListCombinator implements ParserCombinator {
+public class ListCombinator implements Combinator {
 
-    private final ParserCombinator production;
+    private final Combinator production;
 
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
         if (!inbound.isSuccess()) return inbound;
 
         ParsingStep latest = inbound;
+        boolean atLeastOne = false;
 
         while (latest.isSuccess()) {
+            atLeastOne = true;
             latest = production.stepOver(latest);
             if (latest.isSuccess()) {
                 // do smth
             }
         }
 
-        return null;
+        return atLeastOne ? new ParsingStep(true, latest.getTokens()) : latest;
     }
 }

@@ -1,0 +1,11 @@
+# This is just try
+
+npcs
+    npc
+        strength 100
+    end
+
+    npc
+        strength 50
+    end
+end
