@@ -1,31 +1,53 @@
 package com.github.lpld.dslsamples.one.parsing.combinator.core;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author leopold
  * @since 1/4/14
  */
-@RequiredArgsConstructor
 public class ListCombinator implements Combinator {
 
     private final Combinator production;
+
+    @Setter
+    private SemanticsProcessor semanticsProcessor;
+
+    public ListCombinator(Combinator production) {
+        this.production = production;
+    }
+
+    public ListCombinator(SemanticsProcessor semanticsProcessor, Combinator production) {
+        this(production);
+        this.semanticsProcessor = semanticsProcessor;
+    }
 
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
         if (!inbound.isSuccess()) return inbound;
 
         ParsingStep latest = inbound;
+        List<ParsingStep> results = new ArrayList<>();
         boolean atLeastOne = false;
 
         while (latest.isSuccess()) {
-            atLeastOne = true;
             latest = production.stepOver(latest);
             if (latest.isSuccess()) {
-                // do smth
+                atLeastOne = true;
+                results.add(latest);
             }
         }
 
-        return atLeastOne ? new ParsingStep(true, latest.getTokens()) : latest;
+        if (atLeastOne) {
+            if (semanticsProcessor != null) {
+                semanticsProcessor.handleParsingResult(results);
+            }
+            return new ParsingStep(true, latest.getTokens());
+        } else {
+            return latest;
+        }
     }
 }

@@ -24,11 +24,11 @@ public class TerminalParser implements Combinator {
 
         if (tokenType == token.getType()) {
             result = new ParsingStep(true, inbound.getTokens().tail());
+            result.setMatchValue(token.getValue());
         } else {
-            result = new ParsingStep(
-                    false, inbound.getTokens(),
-                    new Error("Expected " + tokenType + " but found " + token.getType(), token.getLineNumber())
-            );
+            result = new ParsingStep(false, inbound.getTokens());
+
+            result.setError(new Error("Expected " + tokenType + " but found " + token.getType(), token.getLineNumber()));
         }
 
         return result;

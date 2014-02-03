@@ -17,14 +17,25 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
     private final String buffer;
     private final TokenBuffer tokenBuffer;
 
-    private Combinator end = new TerminalParser(TokenType.END);
-    private Combinator npc = new TerminalParser(TokenType.NPC);
-    private Combinator npcs = new TerminalParser(TokenType.NPCS);
-    private Combinator strength = new TerminalParser(TokenType.STRENGTH);
-    private Combinator identifier = new TerminalParser(TokenType.IDENTIFIER);
+    private Combinator tClasses = new TerminalParser(TokenType.CLASSES);
+    private Combinator tAttitude = new TerminalParser(TokenType.ATTITUDE);
+    private Combinator tHealth = new TerminalParser(TokenType.HEALTH);
+    private Combinator tStrength = new TerminalParser(TokenType.STRENGTH);
+    private Combinator tMana = new TerminalParser(TokenType.MANA);
+    private Combinator tEnd = new TerminalParser(TokenType.END);
+    private Combinator tField = new TerminalParser(TokenType.FIELD);
+    private Combinator tWidth = new TerminalParser(TokenType.WIDTH);
+    private Combinator tHeight = new TerminalParser(TokenType.HEIGHT);
+    private Combinator tStartPoint = new TerminalParser(TokenType.START_POINT);
+    private Combinator tLeftPar = new TerminalParser(TokenType.LEFT_PAR);
+    private Combinator tRightPar = new TerminalParser(TokenType.RIGHT_PAR);
+    private Combinator tNpcs = new TerminalParser(TokenType.NPCS);
+    private Combinator tItems = new TerminalParser(TokenType.ITEMS);
+    private Combinator tWalls = new TerminalParser(TokenType.WALLS);
 
-    private Combinator npcDef = new SequenceCombinator(npc, strength, identifier, end);
-    private Combinator npcList = new SequenceCombinator(npcs, new ListCombinator(npcDef), end);
+
+//    private Combinator npcDef = new SequenceCombinator(npc, strength, identifier, end);
+//    private Combinator npcList = new SequenceCombinator(npcs, new ListCombinator(npcDef), end);
 
     public GameDefinitionParserCombinator(String buffer) {
         if (buffer == null) {
@@ -37,7 +48,7 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
     @Override
     public Game parse() throws ParsingException {
-        npcList.stepOver(new ParsingStep(true, tokenBuffer));
+//        npcList.stepOver(new ParsingStep(true, tokenBuffer));
         return null;
     }
 }
