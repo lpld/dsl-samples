@@ -26,6 +26,11 @@ public class SequenceCombinator implements Combinator {
         this.semanticsProcessor = semanticsProcessor;
     }
 
+    public SequenceCombinator withSemanticsProcessor(SemanticsProcessor semanticsProcessor) {
+        this.semanticsProcessor = semanticsProcessor;
+        return this;
+    }
+
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
         if (!inbound.isSuccess()) return inbound;

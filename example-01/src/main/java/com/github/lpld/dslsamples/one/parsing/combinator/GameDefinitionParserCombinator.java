@@ -32,8 +32,22 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
     private Combinator tNpcs = new TerminalParser(TokenType.NPCS);
     private Combinator tItems = new TerminalParser(TokenType.ITEMS);
     private Combinator tWalls = new TerminalParser(TokenType.WALLS);
+    private Combinator tRules = new TerminalParser(TokenType.RULES);
+    private Combinator tWhen = new TerminalParser(TokenType.WHEN);
+    private Combinator tClear = new TerminalParser(TokenType.CLEAR);
+    private Combinator tCreate = new TerminalParser(TokenType.CREATE);
+    private Combinator tNpc = new TerminalParser(TokenType.NPC);
+    private Combinator tItem = new TerminalParser(TokenType.ITEM);
+    private Combinator tPlayerStats = new TerminalParser(TokenType.PLAYER_STATS);
+    private Combinator tPlus = new TerminalParser(TokenType.PLUS);
+    private Combinator tMinus = new TerminalParser(TokenType.MINUS);
+    private Combinator tMoney = new TerminalParser(TokenType.MONEY);
+    private Combinator tIdentifier = new TerminalParser(TokenType.IDENTIFIER);
 
 
+    private Combinator classStatDef = new SequenceCombinator(tIdentifier, tIdentifier);
+    private Combinator classDef = new SequenceCombinator(tIdentifier, new ListCombinator(classStatDef), tEnd);
+    private Combinator classesList = new ListCombinator(classDef);
 //    private Combinator npcDef = new SequenceCombinator(npc, strength, identifier, end);
 //    private Combinator npcList = new SequenceCombinator(npcs, new ListCombinator(npcDef), end);
 

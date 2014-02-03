@@ -24,7 +24,7 @@ public class TerminalParser implements Combinator {
 
         if (tokenType == token.getType()) {
             result = new ParsingStep(true, inbound.getTokens().tail());
-            result.setMatchValue(token.getValue());
+            result.setMatchToken(token);
         } else {
             result = new ParsingStep(false, inbound.getTokens());
 

@@ -1,5 +1,6 @@
 package com.github.lpld.dslsamples.one.parsing.combinator.core;
 
+import com.github.lpld.dslsamples.one.lexing.Token;
 import com.github.lpld.dslsamples.one.lexing.TokenBuffer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,5 +19,5 @@ public class ParsingStep {
     private final TokenBuffer tokens;
 
     private Error error;
-    private String matchValue;
+    private Token matchToken;
 }
