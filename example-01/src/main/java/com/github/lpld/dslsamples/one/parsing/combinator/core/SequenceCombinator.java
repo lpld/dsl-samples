@@ -33,7 +33,7 @@ public class SequenceCombinator implements Combinator {
 
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
-        if (!inbound.isSuccess()) return inbound;
+         if (!inbound.isSuccess()) return inbound;
 
         ParsingStep latest = inbound;
         List<ParsingStep> results = new ArrayList<>();

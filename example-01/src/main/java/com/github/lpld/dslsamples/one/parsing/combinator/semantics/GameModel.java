@@ -2,6 +2,7 @@ package com.github.lpld.dslsamples.one.parsing.combinator.semantics;
 
 import com.github.lpld.dslsamples.one.model.map.Location;
 import com.github.lpld.dslsamples.one.model.map.MapItem;
+import com.github.lpld.dslsamples.one.model.npc.Attitude;
 import com.github.lpld.dslsamples.one.model.npc.Npc;
 import com.github.lpld.dslsamples.one.model.npc.NpcClass;
 import com.github.lpld.dslsamples.one.model.rules.Action;
@@ -27,6 +28,11 @@ public class GameModel {
     private int currentInt;
     private String currentString;
     private Action currentAction;
+
+    private Attitude currentAttitude;
+    private Integer currentStrengh;
+    private Integer currentMana;
+    private Integer currentHealth;
 
     // actual model
     private List<NpcClass> npcClasses = new ArrayList<>();

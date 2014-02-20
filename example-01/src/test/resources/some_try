@@ -1,11 +1,24 @@
 # This is just try
 
-npcs
-    npc
+classes
+    Warrior
+        attitude enemy
+        health 100
         strength 100
+        mana 30
     end
 
-    npc
-        strength 50
+    Magician
+        attitude enemy
+        health 100
+        strength 30
+        mana 100
+    end
+
+    Trader
+        attitude neutral
+        health 30
+        strength 10
+        mana 10
     end
 end

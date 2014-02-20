@@ -7,6 +7,9 @@ import com.github.lpld.dslsamples.one.model.Game;
 import com.github.lpld.dslsamples.one.parsing.GameDefinitionParser;
 import com.github.lpld.dslsamples.one.parsing.ParsingException;
 import com.github.lpld.dslsamples.one.parsing.combinator.core.*;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.ClassProcessor;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.GameModel;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.StatDefProcessor;
 
 /**
  * @author leopold
@@ -16,6 +19,8 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
     private final String buffer;
     private final TokenBuffer tokenBuffer;
+
+    private final GameModel gameModel = new GameModel();
 
     private Combinator tClasses = new TerminalParser(TokenType.CLASSES);
     private Combinator tAttitude = new TerminalParser(TokenType.ATTITUDE);
@@ -45,9 +50,13 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
     private Combinator tIdentifier = new TerminalParser(TokenType.IDENTIFIER);
 
 
-    private Combinator classStatDef = new SequenceCombinator(tIdentifier, tIdentifier);
-    private Combinator classDef = new SequenceCombinator(tIdentifier, new ListCombinator(classStatDef), tEnd);
-    private Combinator classesList = new ListCombinator(classDef);
+    private Combinator classStatDef = new SequenceCombinator(tIdentifier, tIdentifier)
+            .withSemanticsProcessor(new StatDefProcessor(gameModel));
+
+    private Combinator classDef = new SequenceCombinator(tIdentifier, new ListCombinator(classStatDef), tEnd)
+            .withSemanticsProcessor(new ClassProcessor(gameModel));
+
+    private Combinator classesList = new SequenceCombinator(tClasses, new ListCombinator(classDef), tEnd);
 //    private Combinator npcDef = new SequenceCombinator(npc, strength, identifier, end);
 //    private Combinator npcList = new SequenceCombinator(npcs, new ListCombinator(npcDef), end);
 
@@ -62,7 +71,7 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
     @Override
     public Game parse() throws ParsingException {
-//        npcList.stepOver(new ParsingStep(true, tokenBuffer));
+        classesList.stepOver(new ParsingStep(true, tokenBuffer));
         return null;
     }
 }
