@@ -35,6 +35,12 @@ field
         t1 Trader (17 11)
     end
 
+    items
+        doorOpener activator (11 12)
+        potion pickable (7 13)
+        lava area (19 7)
+    end
+
     walls
         (1 1)
         (2 1)
@@ -42,5 +48,11 @@ field
         (3 2)
         (3 3)
         (3 4)
+    end
+end
+
+rules
+    when doorOpener activated
+        clear (3 4)
     end
 end

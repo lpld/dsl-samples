@@ -12,6 +12,8 @@ import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.Class
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.GameModel;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.StatDefProcessor;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.field.*;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.rules.ClearCellActionProcessor;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.rules.RuleProcessor;
 
 /**
  * @author leopold
@@ -73,19 +75,35 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
     // npcs
     private Combinator npc = new SequenceCombinator(tIdentifier, tIdentifier, location)
             .withSemanticsProcessor(new NpcProcessor(gameModel));
-    private Combinator npcItem = new SequenceCombinator(npc)
-            .withSemanticsProcessor(new NpcItemProcessor(gameModel));
-    private Combinator npcsList = new SequenceCombinator(tNpcs, new ListCombinator(npcItem), tEnd);
+    private Combinator npcInit = new SequenceCombinator(npc)
+            .withSemanticsProcessor(new NpcInitProcessor(gameModel));
+    private Combinator npcsList = new SequenceCombinator(tNpcs, new ListCombinator(npcInit), tEnd);
     // walls
     private Combinator wall = new SequenceCombinator(location)
             .withSemanticsProcessor(new WallProcessor(gameModel));
     private Combinator walls = new SequenceCombinator(tWalls, new ListCombinator(wall), tEnd);
 
-    private Combinator fieldDef = new SequenceCombinator(tField, fieldWidth, fieldHeight, startPoint, npcsList, walls, tEnd);
+    // items
+    private Combinator item = new SequenceCombinator(tIdentifier, tIdentifier, location)
+            .withSemanticsProcessor(new ItemProcessor(gameModel));
+    private Combinator itemInit = new SequenceCombinator(item)
+            .withSemanticsProcessor(new ItemInitProcessor(gameModel));
+    private Combinator itemsList = new SequenceCombinator(tItems, new ListCombinator(itemInit), tEnd);
+
+    private Combinator fieldDef = new SequenceCombinator(tField, fieldWidth, fieldHeight, startPoint, npcsList, itemsList, walls, tEnd);
+
+    // rules
+    private Combinator clearCell = new SequenceCombinator(tClear, location)
+            .withSemanticsProcessor(new ClearCellActionProcessor(gameModel));
+
+    private Combinator action = new OrCombinator(clearCell); // to be added
+    private Combinator rule = new SequenceCombinator(tWhen, tIdentifier, tIdentifier, action, tEnd)
+            .withSemanticsProcessor(new RuleProcessor(gameModel));
+
+    private Combinator rulesList = new SequenceCombinator(tRules, new ListCombinator(rule), tEnd);
 
 
-
-    private Combinator all = new SequenceCombinator(classesList, fieldDef);
+    private Combinator all = new SequenceCombinator(classesList, fieldDef, rulesList);
 
 
 
