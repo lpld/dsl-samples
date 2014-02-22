@@ -41,11 +41,10 @@ public class SequenceCombinator implements Combinator {
         for (Combinator production : productions) {
             latest = production.stepOver(latest);
             results.add(latest);
-
             if (!latest.isSuccess()) break;
         }
 
-        if (semanticsProcessor != null) {
+        if (latest.isSuccess() && semanticsProcessor != null) {
             semanticsProcessor.handleParsingResult(results);
         }
 

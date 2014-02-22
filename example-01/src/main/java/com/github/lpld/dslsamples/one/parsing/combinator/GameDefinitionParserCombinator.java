@@ -7,9 +7,11 @@ import com.github.lpld.dslsamples.one.model.Game;
 import com.github.lpld.dslsamples.one.parsing.GameDefinitionParser;
 import com.github.lpld.dslsamples.one.parsing.ParsingException;
 import com.github.lpld.dslsamples.one.parsing.combinator.core.*;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.LocationProcessor;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.ClassProcessor;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.GameModel;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.StatDefProcessor;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.field.*;
 
 /**
  * @author leopold
@@ -49,14 +51,45 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
     private Combinator tMoney = new TerminalParser(TokenType.MONEY);
     private Combinator tIdentifier = new TerminalParser(TokenType.IDENTIFIER);
 
-
-    private Combinator classStatDef = new SequenceCombinator(tIdentifier, tIdentifier)
+    // classes
+    private Combinator classStatDef = new SequenceCombinator(new OrCombinator(tAttitude, tHealth, tStrength, tMana), tIdentifier)
             .withSemanticsProcessor(new StatDefProcessor(gameModel));
 
     private Combinator classDef = new SequenceCombinator(tIdentifier, new ListCombinator(classStatDef), tEnd)
             .withSemanticsProcessor(new ClassProcessor(gameModel));
 
     private Combinator classesList = new SequenceCombinator(tClasses, new ListCombinator(classDef), tEnd);
+
+    // field
+    private Combinator fieldWidth = new SequenceCombinator(tWidth, tIdentifier)
+            .withSemanticsProcessor(new FieldWidthProcessor(gameModel));
+    private Combinator fieldHeight = new SequenceCombinator(tHeight, tIdentifier)
+            .withSemanticsProcessor(new FieldHeightProcessor(gameModel));
+    private Combinator location = new SequenceCombinator(tLeftPar, tIdentifier, tIdentifier, tRightPar)
+            .withSemanticsProcessor(new LocationProcessor(gameModel));
+    private Combinator startPoint = new SequenceCombinator(tStartPoint, location)
+            .withSemanticsProcessor(new StartPointProcessor(gameModel));
+
+    // npcs
+    private Combinator npc = new SequenceCombinator(tIdentifier, tIdentifier, location)
+            .withSemanticsProcessor(new NpcProcessor(gameModel));
+    private Combinator npcItem = new SequenceCombinator(npc)
+            .withSemanticsProcessor(new NpcItemProcessor(gameModel));
+    private Combinator npcsList = new SequenceCombinator(tNpcs, new ListCombinator(npcItem), tEnd);
+    // walls
+    private Combinator wall = new SequenceCombinator(location)
+            .withSemanticsProcessor(new WallProcessor(gameModel));
+    private Combinator walls = new SequenceCombinator(tWalls, new ListCombinator(wall), tEnd);
+
+    private Combinator fieldDef = new SequenceCombinator(tField, fieldWidth, fieldHeight, startPoint, npcsList, walls, tEnd);
+
+
+
+    private Combinator all = new SequenceCombinator(classesList, fieldDef);
+
+
+
+
 //    private Combinator npcDef = new SequenceCombinator(npc, strength, identifier, end);
 //    private Combinator npcList = new SequenceCombinator(npcs, new ListCombinator(npcDef), end);
 
@@ -71,7 +104,7 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
     @Override
     public Game parse() throws ParsingException {
-        classesList.stepOver(new ParsingStep(true, tokenBuffer));
+        all.stepOver(new ParsingStep(true, tokenBuffer));
         return null;
     }
 }

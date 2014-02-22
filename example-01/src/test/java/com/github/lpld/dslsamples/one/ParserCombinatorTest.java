@@ -18,7 +18,7 @@ public class ParserCombinatorTest {
     @Test
     public void testSomething() throws IOException, ParsingException {
         GameDefinitionParser parser = new GameDefinitionParserCombinator(readFileAsString("some_try"));
-        //parser.parse();
+        parser.parse();
     }
 
     private String readFileAsString(String filePath) throws IOException {
