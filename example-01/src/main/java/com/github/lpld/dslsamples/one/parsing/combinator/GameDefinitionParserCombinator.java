@@ -4,6 +4,9 @@ import com.github.lpld.dslsamples.one.lexing.TokenBuffer;
 import com.github.lpld.dslsamples.one.lexing.TokenType;
 import com.github.lpld.dslsamples.one.lexing.Tokenizer;
 import com.github.lpld.dslsamples.one.model.Game;
+import com.github.lpld.dslsamples.one.model.Player;
+import com.github.lpld.dslsamples.one.model.map.GameMap;
+import com.github.lpld.dslsamples.one.model.map.MapItem;
 import com.github.lpld.dslsamples.one.parsing.GameDefinitionParser;
 import com.github.lpld.dslsamples.one.parsing.ParsingException;
 import com.github.lpld.dslsamples.one.parsing.combinator.core.*;
@@ -12,8 +15,7 @@ import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.Class
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.GameModel;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes.StatDefProcessor;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.field.*;
-import com.github.lpld.dslsamples.one.parsing.combinator.semantics.rules.ClearCellActionProcessor;
-import com.github.lpld.dslsamples.one.parsing.combinator.semantics.rules.RuleProcessor;
+import com.github.lpld.dslsamples.one.parsing.combinator.semantics.rules.*;
 
 /**
  * @author leopold
@@ -93,10 +95,21 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
     private Combinator fieldDef = new SequenceCombinator(tField, fieldWidth, fieldHeight, startPoint, npcsList, itemsList, walls, tEnd);
 
     // rules
-    private Combinator clearCell = new SequenceCombinator(tClear, location)
+    private Combinator clearCellAction = new SequenceCombinator(tClear, location)
             .withSemanticsProcessor(new ClearCellActionProcessor(gameModel));
+    private Combinator createNpcAction = new SequenceCombinator(tCreate, tNpc, npc, tEnd)
+            .withSemanticsProcessor(new CreateNpcActionProcessor(gameModel));
+    private Combinator createItemAction = new SequenceCombinator(tCreate, tItem, item, tEnd)
+            .withSemanticsProcessor(new CreateItemActionProcessor(gameModel));
+    private Combinator statUpdate = new SequenceCombinator(
+            new OrCombinator(tHealth, tStrength, tMana, tMoney),
+            new OrCombinator(tPlus, tMinus),
+            tIdentifier
+    ).withSemanticsProcessor(new StatUpdateProcessor(gameModel));
+    private Combinator playerStatsAction = new SequenceCombinator(tPlayerStats, new ListCombinator(statUpdate), tEnd)
+            .withSemanticsProcessor(new PlayerStatsActionProcessor(gameModel));
 
-    private Combinator action = new OrCombinator(clearCell); // to be added
+    private Combinator action = new OrCombinator(clearCellAction, createNpcAction, createItemAction, playerStatsAction);
     private Combinator rule = new SequenceCombinator(tWhen, tIdentifier, tIdentifier, action, tEnd)
             .withSemanticsProcessor(new RuleProcessor(gameModel));
 
@@ -104,12 +117,6 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
 
     private Combinator all = new SequenceCombinator(classesList, fieldDef, rulesList);
-
-
-
-
-//    private Combinator npcDef = new SequenceCombinator(npc, strength, identifier, end);
-//    private Combinator npcList = new SequenceCombinator(npcs, new ListCombinator(npcDef), end);
 
     public GameDefinitionParserCombinator(String buffer) {
         if (buffer == null) {
@@ -122,7 +129,20 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
     @Override
     public Game parse() throws ParsingException {
-        all.stepOver(new ParsingStep(true, tokenBuffer));
-        return null;
+        ParsingStep result = all.stepOver(new ParsingStep(true, tokenBuffer));
+
+        if (result.isSuccess()) {
+            GameMap gameMap = new GameMap(gameModel.getWidth(), gameModel.getHeight());
+            Player player = new Player(gameModel.getStartPoint());
+            gameMap.addItem(player);
+            for (MapItem item : gameModel.getItems()) {
+                gameMap.addItem(item);
+            }
+
+            return new Game(gameMap, player, gameModel.getRules());
+        } else {
+            // TODO provide more informative errors
+            throw new ParsingException("Unable to parse. Error on line: " + tokenBuffer.getCurrentLine());
+        }
     }
 }

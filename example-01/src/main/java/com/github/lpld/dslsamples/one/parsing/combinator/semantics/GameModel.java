@@ -21,6 +21,7 @@ import java.util.Map;
 @Data
 public class GameModel {
     // currently processing
+    // probably it will be better to use map based parsing context
     private NpcClass currentClass;
     private Npc currentNpc;
     private MapItem currentItem;
@@ -33,6 +34,11 @@ public class GameModel {
     private Integer currentStrengh;
     private Integer currentMana;
     private Integer currentHealth;
+
+    private int deltaHealth;
+    private int deltaMoney;
+    private int deltaMana;
+    private int deltaStrength;
 
     // actual model
     private List<NpcClass> npcClasses = new ArrayList<>();
