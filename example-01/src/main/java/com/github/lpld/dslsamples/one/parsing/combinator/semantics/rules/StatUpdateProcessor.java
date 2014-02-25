@@ -2,6 +2,7 @@ package com.github.lpld.dslsamples.one.parsing.combinator.semantics.rules;
 
 import com.github.lpld.dslsamples.one.lexing.TokenType;
 import com.github.lpld.dslsamples.one.parsing.combinator.core.ParsingStep;
+import com.github.lpld.dslsamples.one.parsing.combinator.core.ParsingUtils;
 import com.github.lpld.dslsamples.one.parsing.combinator.core.SemanticsProcessor;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.GameModel;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class StatUpdateProcessor implements SemanticsProcessor {
     private final GameModel gameModel;
 
     @Override
-    public void handleParsingResult(List<ParsingStep> steps) {
+    public void handleParsingResult(List<ParsingStep> steps, ParsingStep result) {
         Validate.notEmpty(steps);
         Validate.isTrue(steps.size() == 3, "Expected 3 but was ", steps.size());
 
@@ -26,7 +27,8 @@ public class StatUpdateProcessor implements SemanticsProcessor {
         TokenType sign = steps.get(1).getMatchToken().getType();
         String value = steps.get(2).getMatchToken().getValue();
 
-        int delta = Integer.parseInt(value);
+        int delta = ParsingUtils.parseInt(value, result, "Delta value");
+
         switch (sign) {
             case PLUS:
                 break;

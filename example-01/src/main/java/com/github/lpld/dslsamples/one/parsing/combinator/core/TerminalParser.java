@@ -23,10 +23,10 @@ public class TerminalParser implements Combinator {
         Token token = inbound.getTokens().nextToken();
 
         if (tokenType == token.getType()) {
-            result = new ParsingStep(true, inbound.getTokens().tail());
+            result = new ParsingStep(inbound.getTokens().tail());
             result.setMatchToken(token);
         } else {
-            result = new ParsingStep(false, inbound.getTokens());
+            result = new ParsingStep(inbound.getTokens());
 
             result.setError(new Error("Expected " + tokenType + " but found " + token.getType(), token.getLineNumber()));
         }

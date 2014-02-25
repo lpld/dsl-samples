@@ -18,7 +18,7 @@ public class OrCombinator implements Combinator {
     public ParsingStep stepOver(ParsingStep inbound) {
         if (!inbound.isSuccess()) return inbound;
 
-        ParsingStep latest = new ParsingStep(false, inbound.getTokens());
+        ParsingStep latest = null;
 
         for (Combinator production : productions) {
             latest = production.stepOver(inbound);

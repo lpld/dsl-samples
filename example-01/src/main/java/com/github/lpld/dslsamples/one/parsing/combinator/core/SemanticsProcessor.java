@@ -7,5 +7,5 @@ import java.util.List;
  * @since 2/1/14
  */
 public interface SemanticsProcessor {
-    void handleParsingResult(List<ParsingStep> steps);
+    void handleParsingResult(List<ParsingStep> steps, ParsingStep result);
 }

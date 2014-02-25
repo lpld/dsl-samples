@@ -17,7 +17,7 @@ import java.util.List;
 public class StartPointProcessor implements SemanticsProcessor {
     private final GameModel gameModel;
     @Override
-    public void handleParsingResult(List<ParsingStep> steps) {
+    public void handleParsingResult(List<ParsingStep> steps, ParsingStep result) {
         Validate.notEmpty(steps);
         Validate.isTrue(steps.size() == 2, "Expected 2 but was ", steps.size());
         Validate.isTrue(steps.get(0).getMatchToken().getType() == TokenType.START_POINT);

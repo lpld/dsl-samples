@@ -2,8 +2,8 @@ package com.github.lpld.dslsamples.one.parsing.combinator.semantics.classes;
 
 import com.github.lpld.dslsamples.one.lexing.TokenType;
 import com.github.lpld.dslsamples.one.model.npc.Attitude;
-import com.github.lpld.dslsamples.one.parsing.combinator.core.ParsingStep;
-import com.github.lpld.dslsamples.one.parsing.combinator.core.SemanticsProcessor;
+import com.github.lpld.dslsamples.one.parsing.combinator.core.*;
+import com.github.lpld.dslsamples.one.parsing.combinator.core.Error;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.GameModel;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.Validate;
@@ -19,32 +19,45 @@ public class StatDefProcessor implements SemanticsProcessor {
     private final GameModel gameModel;
 
     @Override
-    public void handleParsingResult(List<ParsingStep> steps) {
+    public void handleParsingResult(List<ParsingStep> steps, ParsingStep result) {
         Validate.notEmpty(steps);
         Validate.isTrue(steps.size() == 2, "Expected 2 but was ", steps.size());
-        // TODO put line number in error message
 
         TokenType statName = steps.get(0).getMatchToken().getType();
         String value = steps.get(1).getMatchToken().getValue();
 
         switch (statName) {
             case ATTITUDE:
-                attitude(value);
+                Attitude attitude = attitude(value);
+                if (attitude == null) {
+                    result.setError(new Error(
+                            "Unknown attitude: " + value,
+                            steps.get(1).getMatchToken().getLineNumber()
+                    ));
+                } else {
+                    gameModel.setCurrentAttitude(attitude);
+                }
                 break;
             case STRENGTH:
-                gameModel.setCurrentStrengh(Integer.parseInt(value)); //todo error handling
+                gameModel.setCurrentStrengh(
+                        ParsingUtils.parseInt(value, result, "Strength")
+                );
                 break;
             case HEALTH:
-                gameModel.setCurrentHealth(Integer.parseInt(value));
+                gameModel.setCurrentHealth(
+                        ParsingUtils.parseInt(value, result, "Health")
+                );
                 break;
             case MANA:
-                gameModel.setCurrentMana(Integer.parseInt(value));
+                gameModel.setCurrentMana(
+                        ParsingUtils.parseInt(value, result, "Mana")
+                );
                 break;
         }
     }
 
-    private void attitude(String value) {
-        Attitude attitude;
+    private Attitude attitude(String value) {
+        Attitude attitude = null;
 
         switch (value) {
             case "ally":
@@ -56,9 +69,7 @@ public class StatDefProcessor implements SemanticsProcessor {
             case "enemy":
                 attitude = Attitude.ENEMY;
                 break;
-            default:
-                throw new IllegalStateException();
         }
-        gameModel.setCurrentAttitude(attitude);
+        return attitude;
     }
 }

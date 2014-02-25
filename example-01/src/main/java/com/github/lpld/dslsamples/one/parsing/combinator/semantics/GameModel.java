@@ -31,9 +31,9 @@ public class GameModel {
     private Action currentAction;
 
     private Attitude currentAttitude;
-    private Integer currentStrengh;
-    private Integer currentMana;
-    private Integer currentHealth;
+    private int currentStrengh;
+    private int currentMana;
+    private int currentHealth;
 
     private int deltaHealth;
     private int deltaMoney;

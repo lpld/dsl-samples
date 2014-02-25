@@ -19,7 +19,7 @@ public class ClassProcessor implements SemanticsProcessor {
     private final GameModel gameModel;
 
     @Override
-    public void handleParsingResult(List<ParsingStep> steps) {
+    public void handleParsingResult(List<ParsingStep> steps, ParsingStep result) {
         Validate.notEmpty(steps);
         Validate.isTrue(steps.size() == 3, "Expected to be 3, but was ", steps.size());
 

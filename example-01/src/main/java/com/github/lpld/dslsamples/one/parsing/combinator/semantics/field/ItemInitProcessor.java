@@ -16,7 +16,7 @@ public class ItemInitProcessor implements SemanticsProcessor {
     private final GameModel gameModel;
 
     @Override
-    public void handleParsingResult(List<ParsingStep> steps) {
+    public void handleParsingResult(List<ParsingStep> steps, ParsingStep result) {
         gameModel.getItems().add(gameModel.getCurrentItem());
     }
 }

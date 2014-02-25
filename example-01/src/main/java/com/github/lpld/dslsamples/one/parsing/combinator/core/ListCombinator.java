@@ -42,10 +42,12 @@ public class ListCombinator implements Combinator {
         }
 
         if (atLeastOne) {
+
+            ParsingStep result = new ParsingStep(latest.getTokens());
             if (semanticsProcessor != null) {
-                semanticsProcessor.handleParsingResult(results);
+                semanticsProcessor.handleParsingResult(results, result);
             }
-            return new ParsingStep(true, latest.getTokens());
+            return result;
         } else {
             return latest;
         }

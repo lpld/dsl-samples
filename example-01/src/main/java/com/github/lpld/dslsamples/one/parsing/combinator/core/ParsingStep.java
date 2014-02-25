@@ -15,9 +15,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ParsingStep {
-    private final boolean success;
     private final TokenBuffer tokens;
-
     private Error error;
     private Token matchToken;
+
+    public boolean isSuccess() {
+        return error == null;
+    }
 }

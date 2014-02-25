@@ -6,8 +6,8 @@ import com.github.lpld.dslsamples.one.model.items.Pickable;
 import com.github.lpld.dslsamples.one.model.map.Location;
 import com.github.lpld.dslsamples.one.model.map.MapItem;
 import com.github.lpld.dslsamples.one.model.npc.Npc;
-import com.github.lpld.dslsamples.one.parsing.combinator.core.ParsingStep;
-import com.github.lpld.dslsamples.one.parsing.combinator.core.SemanticsProcessor;
+import com.github.lpld.dslsamples.one.parsing.combinator.core.*;
+import com.github.lpld.dslsamples.one.parsing.combinator.core.Error;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.GameModel;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.Validate;
@@ -22,7 +22,7 @@ import java.util.List;
 public class ItemProcessor implements SemanticsProcessor {
     private final GameModel gameModel;
     @Override
-    public void handleParsingResult(List<ParsingStep> steps) {
+    public void handleParsingResult(List<ParsingStep> steps, ParsingStep result) {
         Validate.notEmpty(steps);
         Validate.isTrue(steps.size() == 3, "Expected 3 but was ", steps.size());
 
@@ -44,6 +44,11 @@ public class ItemProcessor implements SemanticsProcessor {
         }
         if (item != null) {
             gameModel.setCurrentItem(item);
+        } else {
+            result.setError(new Error(
+                    "Unknown item type: " + itemType,
+                    result.getMatchToken().getLineNumber()
+            ));
         }
     }
 }

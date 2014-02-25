@@ -17,7 +17,7 @@ public class WallProcessor implements SemanticsProcessor {
 
     private final GameModel gameModel;
     @Override
-    public void handleParsingResult(List<ParsingStep> steps) {
+    public void handleParsingResult(List<ParsingStep> steps, ParsingStep result) {
         gameModel.getItems().add(new Wall(
                 gameModel.getCurrentLocation()
         ));

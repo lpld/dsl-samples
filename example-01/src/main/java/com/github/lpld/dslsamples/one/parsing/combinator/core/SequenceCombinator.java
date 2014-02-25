@@ -44,10 +44,12 @@ public class SequenceCombinator implements Combinator {
             if (!latest.isSuccess()) break;
         }
 
+        ParsingStep result = latest.isSuccess() ? new ParsingStep(latest.getTokens()) : latest;
+
         if (latest.isSuccess() && semanticsProcessor != null) {
-            semanticsProcessor.handleParsingResult(results);
+            semanticsProcessor.handleParsingResult(results, result);
         }
 
-        return latest.isSuccess() ? new ParsingStep(true, latest.getTokens()) : latest;
+        return result;
     }
 }

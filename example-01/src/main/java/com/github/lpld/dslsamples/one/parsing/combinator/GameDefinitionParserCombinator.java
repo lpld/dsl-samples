@@ -129,7 +129,7 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
     @Override
     public Game parse() throws ParsingException {
-        ParsingStep result = all.stepOver(new ParsingStep(true, tokenBuffer));
+        ParsingStep result = all.stepOver(new ParsingStep(tokenBuffer));
 
         if (result.isSuccess()) {
             GameMap gameMap = new GameMap(gameModel.getWidth(), gameModel.getHeight());
@@ -141,8 +141,7 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
             return new Game(gameMap, player, gameModel.getRules());
         } else {
-            // TODO provide more informative errors
-            throw new ParsingException("Unable to parse. Error on line: " + tokenBuffer.getCurrentLine());
+            throw new ParsingException("Unable to parse. Error on line: " + result.getError().getLine() + ": " + result.getError().getMessage());
         }
     }
 }
