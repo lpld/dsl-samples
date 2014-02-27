@@ -8,6 +8,8 @@ import com.github.lpld.dslsamples.one.model.map.Location;
 import com.github.lpld.dslsamples.one.model.map.MapItem;
 
 /**
+ * Map item that triggers an event each time it is visited by player.
+ *
  * @author leopold
  * @since 12/29/13
  */

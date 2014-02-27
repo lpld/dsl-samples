@@ -18,6 +18,9 @@ import com.github.lpld.dslsamples.one.parsing.combinator.semantics.field.*;
 import com.github.lpld.dslsamples.one.parsing.combinator.semantics.rules.*;
 
 /**
+ * A parser combinator. Based on approach described in Martin Fowler's
+ * "Domain Specific Languages", chapter 22, "Parser Combinator".
+ *
  * @author leopold
  * @since 1/4/14
  */

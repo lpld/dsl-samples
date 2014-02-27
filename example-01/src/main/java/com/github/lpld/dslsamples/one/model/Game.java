@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Game object which contains of Map, player and s set of rules to execute
+ * different actions when certain events are triggered.
+ *
  * @author leopold
  * @since 1/1/14
  */

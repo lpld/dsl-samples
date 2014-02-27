@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 /**
+ * A class that represents a buffer of tokens with
+ * methods to iterate through them.
+ *
  * @author leopold
  * @since 1/4/14
  */
@@ -17,10 +20,17 @@ public class TokenBuffer {
     @Getter
     private int currentLine = 0;
 
+    /**
+     * If there's a token in buffer
+     */
     public boolean hasNext() {
         return tokenList.size() > currentToken;
     }
 
+    /**
+     * Read next token without moving the pointer.
+     * @return Next token if it exists, {@link TokenType.EOF} otherwise.     *
+     */
     public Token nextToken() {
         if (!hasNext()) {
             new Token(TokenType.EOF, "eof", currentLine + 1);
@@ -28,6 +38,10 @@ public class TokenBuffer {
         return tokenList.get(currentToken);
     }
 
+    /**
+     * Pop next token and move the pointer.
+     * @return Next token if it exists, {@link TokenType.EOF} otherwise.     *
+     */
     public Token popToken() {
         Token token = nextToken();
         currentToken ++;
@@ -35,6 +49,9 @@ public class TokenBuffer {
         return token;
     }
 
+    /**
+     * Create new {@code TokenBuffer} that is a tail of this buffer.
+     */
     public TokenBuffer tail() {
         TokenBuffer tail = new TokenBuffer(tokenList);
         tail.currentToken = this.currentToken + 1;

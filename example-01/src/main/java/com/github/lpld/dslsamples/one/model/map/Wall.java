@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * Static item that cannot be removed.
+ *
  * @author leopold
  * @since 12/29/13
  */

@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
+ * A non-player character. Can be attacked.
+ *
  * @author leopold
  * @since 12/29/13
  */

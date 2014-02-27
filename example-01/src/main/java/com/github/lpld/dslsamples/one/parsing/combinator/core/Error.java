@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
+ * Parsing error.
+ *
  * @author leopold
  * @since 1/4/14
  */

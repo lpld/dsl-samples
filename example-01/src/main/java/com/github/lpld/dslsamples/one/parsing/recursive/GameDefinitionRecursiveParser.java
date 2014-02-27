@@ -27,13 +27,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A recursive descent parser for
+ * A recursive descent parser. Based on approach described
+ * in Martin Fowler's "Domain Specific Languages", chapter 21,
+ * "Recursive Descent Parser".
  *
  * @author leopold
  * @since 12/30/13
  */
 public class GameDefinitionRecursiveParser implements GameDefinitionParser {
-    private String buffer;
     private final TokenBuffer tokenBuffer;
 
     // TEMP
@@ -58,7 +59,6 @@ public class GameDefinitionRecursiveParser implements GameDefinitionParser {
             throw new NullPointerException();
         }
 
-        this.buffer = buffer;
         this.tokenBuffer = new Tokenizer(buffer).getTokens();
     }
 

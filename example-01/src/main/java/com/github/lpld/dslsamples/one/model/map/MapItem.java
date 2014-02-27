@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
+ * Everything that is located on the map.
+ *
  * @author leopold
  * @since 12/29/13
  */

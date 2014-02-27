@@ -9,6 +9,8 @@ import lombok.ToString;
 import com.github.lpld.dslsamples.one.model.map.MapItem;
 
 /**
+ * Action that creates a new item on the map.
+ *
  * @author leopold
  * @since 12/29/13
  */

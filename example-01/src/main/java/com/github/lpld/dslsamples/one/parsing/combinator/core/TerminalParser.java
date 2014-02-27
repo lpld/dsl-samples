@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import java.lang.*;
 
 /**
+ * Parser for simple tokens.
+ *
  * @author leopold
  * @since 1/4/14
  */
@@ -24,16 +26,15 @@ public class TerminalParser implements Combinator {
 
         if (tokenType == token.getType()) {
             result = new ParsingStep(true, inbound.getTokens().tail());
-            result.setMatchToken(token);
         } else {
             result = new ParsingStep(false, inbound.getTokens());
-            result.setMatchToken(token);
             result.setError(new Error(
                     "Illegal syntax: [" + token.getValue() + "]. Expected " + tokenType + " but found " + token.getType(),
                     token.getLineNumber()
             ));
         }
 
+        result.setMatchToken(token);
         return result;
     }
 }

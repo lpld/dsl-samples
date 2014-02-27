@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Game map which is represented as a rectangular field {@code xSize x ySize}.
+ *
  * @author leopold
  * @since 12/29/13
  */

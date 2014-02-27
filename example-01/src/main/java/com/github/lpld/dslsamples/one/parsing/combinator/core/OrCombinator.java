@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Alternative combinator, that will chose the first successfully parsed
+ * step.
+ *
  * @author leopold
  * @since 2/3/14
  */

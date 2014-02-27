@@ -3,6 +3,8 @@ package com.github.lpld.dslsamples.one.lexing;
 import lombok.RequiredArgsConstructor;
 
 /**
+ * A set of all possible token types
+ *
  * @author leopold
  * @since 12/30/13
  */
@@ -41,6 +43,15 @@ public enum TokenType {
     WHITESPACE("^(\\s)+", false),
     EOF("^EOF", false);
 
+    /**
+     * Regex to match
+     */
     final String regex;
+
+    /**
+     * If token of this type should be taken into account when processing
+     * the syntax. For instance, comments, whitespaces, line endings will
+     * be ignored and thus not processed.
+     */
     final boolean output;
 }

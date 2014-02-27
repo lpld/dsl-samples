@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Intermediate object that is used during parsing to store parsing data.
+ *
  * @author leopold
  * @since 2/3/14
  */
@@ -22,14 +24,10 @@ import java.util.Map;
 public class GameModel {
     // currently processing
     // probably it will be better to use map based parsing context
-    private NpcClass currentClass;
     private Npc currentNpc;
     private MapItem currentItem;
     private Location currentLocation;
-    private int currentInt;
-    private String currentString;
     private Action currentAction;
-
     private Attitude currentAttitude;
     private int currentStrengh;
     private int currentMana;

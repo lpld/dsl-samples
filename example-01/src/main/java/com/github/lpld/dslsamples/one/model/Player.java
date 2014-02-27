@@ -7,6 +7,8 @@ import com.github.lpld.dslsamples.one.model.map.Location;
 import com.github.lpld.dslsamples.one.model.map.MapItem;
 
 /**
+ * Main player
+ *
  * @author leopold
  * @since 12/29/13
  */

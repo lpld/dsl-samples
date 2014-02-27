@@ -7,6 +7,8 @@ import lombok.ToString;
 import com.github.lpld.dslsamples.one.model.map.Location;
 
 /**
+ * Action that clears a specified cell on the game map.
+ *
  * @author leopold
  * @since 12/29/13
  */

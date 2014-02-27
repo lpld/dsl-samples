@@ -8,6 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * Map item that can be picked by player. After picking
+ * the item is removed from map.
+ *
  * @author leopold
  * @since 12/29/13
  */

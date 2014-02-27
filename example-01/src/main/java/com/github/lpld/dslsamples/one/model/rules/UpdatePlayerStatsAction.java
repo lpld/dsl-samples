@@ -6,6 +6,8 @@ import com.github.lpld.dslsamples.one.model.map.GameMap;
 import lombok.*;
 
 /**
+ * Action that updates player parameters.
+ *
  * @author leopold
  * @since 12/29/13
  */

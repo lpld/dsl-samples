@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A combinator for a list of same structures.
+ *
  * @author leopold
  * @since 1/4/14
  */

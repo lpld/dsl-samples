@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * A token
+ * A token, a lexical primitive.
  *
  * @author leopold
  * @since 12/30/13

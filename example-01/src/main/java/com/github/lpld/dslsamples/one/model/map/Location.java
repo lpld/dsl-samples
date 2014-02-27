@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
+ * Basic object to specify a location on the map.
+ *
  * @author leopold
  * @since 12/29/13
  */

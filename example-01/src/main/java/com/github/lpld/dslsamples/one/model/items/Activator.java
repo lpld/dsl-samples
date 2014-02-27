@@ -9,6 +9,8 @@ import com.github.lpld.dslsamples.one.model.map.Location;
 import com.github.lpld.dslsamples.one.model.map.MapItem;
 
 /**
+ * A map item that can be activated only once.
+ *
  * @author leopold
  * @since 12/29/13
  */

@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * A combinator for a list of different structures that have a
+ * predefined order.
+ *
  * @author leopold
  * @since 1/5/14
  */

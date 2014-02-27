@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import com.github.lpld.dslsamples.one.model.map.MapItem;
 
 /**
+ * Game event.
+ *
  * @author leopold
  * @since 12/29/13
  */
