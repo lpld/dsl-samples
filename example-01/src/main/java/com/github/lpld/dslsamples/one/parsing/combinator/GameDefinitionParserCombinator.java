@@ -129,9 +129,9 @@ public class GameDefinitionParserCombinator implements GameDefinitionParser {
 
     @Override
     public Game parse() throws ParsingException {
-        ParsingStep result = all.stepOver(new ParsingStep(tokenBuffer));
+        ParsingStep result = all.stepOver(new ParsingStep(true, tokenBuffer));
 
-        if (result.isSuccess()) {
+        if (result.isOk()) {
             GameMap gameMap = new GameMap(gameModel.getWidth(), gameModel.getHeight());
             Player player = new Player(gameModel.getStartPoint());
             gameMap.addItem(player);

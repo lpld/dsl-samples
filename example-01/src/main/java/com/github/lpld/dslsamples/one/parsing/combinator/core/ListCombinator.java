@@ -27,23 +27,22 @@ public class ListCombinator implements Combinator {
 
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
-        if (!inbound.isSuccess()) return inbound;
+        if (!inbound.isOk()) return inbound;
 
         ParsingStep latest = inbound;
         List<ParsingStep> results = new ArrayList<>();
         boolean atLeastOne = false;
 
-        while (latest.isSuccess()) {
+        while (latest.isOk()) {
             latest = production.stepOver(latest);
-            if (latest.isSuccess()) {
+            if (latest.isGrammarOk()) {
                 atLeastOne = true;
                 results.add(latest);
             }
         }
 
-        if (atLeastOne) {
-
-            ParsingStep result = new ParsingStep(latest.getTokens());
+        if (atLeastOne && !latest.isGrammarOk()) {
+            ParsingStep result = new ParsingStep(true, latest.getTokens());
             if (semanticsProcessor != null) {
                 semanticsProcessor.handleParsingResult(results, result);
             }

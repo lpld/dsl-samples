@@ -33,7 +33,7 @@ public class SequenceCombinator implements Combinator {
 
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
-         if (!inbound.isSuccess()) return inbound;
+         if (!inbound.isOk()) return inbound;
 
         ParsingStep latest = inbound;
         List<ParsingStep> results = new ArrayList<>();
@@ -41,15 +41,15 @@ public class SequenceCombinator implements Combinator {
         for (Combinator production : productions) {
             latest = production.stepOver(latest);
             results.add(latest);
-            if (!latest.isSuccess()) break;
+            if (!latest.isOk()) break;
         }
 
-        ParsingStep result = latest.isSuccess() ? new ParsingStep(latest.getTokens()) : latest;
+        //ParsingStep result = latest; //.isOk() ? new ParsingStep(true, latest.getTokens()) : latest;
 
-        if (latest.isSuccess() && semanticsProcessor != null) {
-            semanticsProcessor.handleParsingResult(results, result);
+        if (latest.isOk() && semanticsProcessor != null) {
+            semanticsProcessor.handleParsingResult(results, latest);
         }
 
-        return result;
+        return latest;
     }
 }

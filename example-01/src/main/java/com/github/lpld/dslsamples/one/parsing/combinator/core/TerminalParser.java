@@ -16,19 +16,22 @@ public class TerminalParser implements Combinator {
 
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
-        if (!inbound.isSuccess()) return inbound;
+        if (!inbound.isParsingOk()) return inbound;
 
         ParsingStep result;
 
         Token token = inbound.getTokens().nextToken();
 
         if (tokenType == token.getType()) {
-            result = new ParsingStep(inbound.getTokens().tail());
+            result = new ParsingStep(true, inbound.getTokens().tail());
             result.setMatchToken(token);
         } else {
-            result = new ParsingStep(inbound.getTokens());
-
-            result.setError(new Error("Expected " + tokenType + " but found " + token.getType(), token.getLineNumber()));
+            result = new ParsingStep(false, inbound.getTokens());
+            result.setMatchToken(token);
+            result.setError(new Error(
+                    "Illegal syntax: [" + token.getValue() + "]. Expected " + tokenType + " but found " + token.getType(),
+                    token.getLineNumber()
+            ));
         }
 
         return result;

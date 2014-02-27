@@ -13,8 +13,11 @@ public final class ParsingUtils {
         try {
             value = Integer.parseInt(stringValue);
         } catch (NumberFormatException ex) {
+            result.getMatchToken();
+            result.getMatchToken().getLineNumber();
+
             result.setError(new Error(
-                    fieldName + " must be valid integer: " + stringValue,
+                    fieldName + " must be a valid integer: " + stringValue,
                     result.getMatchToken().getLineNumber()
             ));
         }

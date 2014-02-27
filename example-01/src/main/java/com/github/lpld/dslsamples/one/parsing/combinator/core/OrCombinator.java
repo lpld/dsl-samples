@@ -16,16 +16,20 @@ public class OrCombinator implements Combinator {
 
     @Override
     public ParsingStep stepOver(ParsingStep inbound) {
-        if (!inbound.isSuccess()) return inbound;
+        if (!inbound.isOk()) return inbound;
 
         ParsingStep latest = null;
 
         for (Combinator production : productions) {
             latest = production.stepOver(inbound);
 
-            if (latest.isSuccess()) break;
+            if (latest.isGrammarOk()) return latest;
         }
 
-        return latest;
+        ParsingStep result = new ParsingStep(false, inbound.getTokens());
+        result.setError(new Error(
+                "Illegal syntax", inbound.getTokens().nextToken().getLineNumber()
+        ));
+        return result;
     }
 }
