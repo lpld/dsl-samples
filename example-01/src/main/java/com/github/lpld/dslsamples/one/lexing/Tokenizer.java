@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Class that splits incoming text into buffer of tokens.
  * Based on code from Martin Fowler's "Domain Specific Languages",
- * chapter 20, Regex Table Lexer. *
+ * chapter 20, Regex Table Lexer.
  *
  * @author leopold
  * @since 12/30/13
